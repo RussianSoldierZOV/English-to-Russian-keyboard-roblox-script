@@ -1,0 +1,105 @@
+-- English to Russian text converter function
+local function convertToRussian(text)
+    local conversionTable = {
+        ["A"] = "Д", ["B"] = "Б", ["C"] = "Ҫ", ["D"] = "Ԁ", ["E"] = "Є", ["F"] = "Ғ",
+        ["G"] = "Ԍ", ["H"] = "Ӊ", ["I"] = "Ї", ["J"] = "Ј", ["K"] = "Ҝ", ["L"] = "Ꙇ",
+        ["M"] = "Ӎ", ["N"] = "Ҋ", ["O"] = "Ө", ["P"] = "Ҏ", ["Q"] = "Ѻ", ["R"] = "Я",
+        ["S"] = "Ѕ", ["T"] = "Ꚍ", ["U"] = "Ҵ", ["V"] = "Ѵ", ["W"] = "Ѡ", ["X"] = "Ӝ",
+        ["Y"] = "Ұ", ["Z"] = "Ѯ",
+        ["a"] = "д", ["b"] = "б", ["c"] = "ҫ", ["d"] = "ԁ", ["e"] = "є", ["f"] = "ғ",
+        ["g"] = "ԍ", ["h"] = "ӊ", ["i"] = "ї", ["j"] = "ј", ["k"] = "ҝ", ["l"] = "ꙇ",
+        ["m"] = "ӎ", ["n"] = "ҋ", ["o"] = "ө", ["p"] = "ҏ", ["q"] = "ѻ", ["r"] = "я",
+        ["s"] = "ѕ", ["t"] = "ꚍ", ["u"] = "ҵ", ["v"] = "ѵ", ["w"] = "ѡ", ["x"] = "ӝ",
+        ["y"] = "ұ", ["z"] = "ѯ"
+    }
+
+    local russianText = ""
+
+    for i = 1, #text do
+        local char = string.sub(text, i, i)
+        russianText = russianText .. (conversionTable[char] or char)
+    end
+
+    return russianText
+end
+
+-- Create GUI
+local gui = Instance.new("ScreenGui")
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.4, 0, 0.3, 0)
+frame.Position = UDim2.new(0.3, 0, 0.35, 0)
+frame.BackgroundColor3 = Color3.new(1, 1, 1)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local inputBox = Instance.new("TextBox")
+inputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+inputBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+inputBox.PlaceholderText = "Enter English text here"
+inputBox.Font = Enum.Font.SourceSans
+inputBox.TextSize = 20
+inputBox.TextColor3 = Color3.new(0, 0, 0)
+inputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
+inputBox.Parent = frame
+
+local convertButton = Instance.new("TextButton")
+convertButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+convertButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+convertButton.Text = "Convert to Russian"
+convertButton.Font = Enum.Font.SourceSans
+convertButton.TextSize = 20
+convertButton.TextColor3 = Color3.new(1, 1, 1)
+convertButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
+convertButton.Parent = frame
+
+local outputBox = Instance.new("TextBox")
+outputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+outputBox.Position = UDim2.new(0.1, 0, 0.8, 0)
+outputBox.Font = Enum.Font.SourceSans
+outputBox.TextSize = 20
+outputBox.TextColor3 = Color3.new(0, 0, 0)
+outputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
+outputBox.TextEditable = false
+outputBox.Parent = frame
+
+convertButton.MouseButton1Click:Connect(function()
+    local englishText = inputBox.Text
+    local russianText = convertToRussian(englishText)
+    outputBox.Text = russianText
+end)
+
+-- Create circular minimize button
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0.05, 0, 0.1, 0)
+minimizeButton.Position = UDim2.new(0.85, 0, 0, 0)
+minimizeButton.BackgroundColor3 = Color3.new(1, 0, 0)
+minimizeButton.Text = ""
+minimizeButton.Parent = frame
+
+local uiCorner1 = Instance.new("UICorner")
+uiCorner1.CornerRadius = UDim.new(0.5, 0)
+uiCorner1.Parent = minimizeButton
+
+-- Create circular close button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0.05, 0, 0.1, 0)
+closeButton.Position = UDim2.new(0.9, 0, 0, 0)
+closeButton.BackgroundColor3 = Color3.new(1, 0, 0)
+closeButton.Text = ""
+closeButton.Parent = frame
+
+local uiCorner2 = Instance.new("UICorner")
+uiCorner2.CornerRadius = UDim.new(0.5, 0)
+uiCorner2.Parent = closeButton
+
+-- Minimize button functionality
+minimizeButton.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
+end)
+
+-- Close button functionality
+closeButton.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
