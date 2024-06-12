@@ -69,24 +69,6 @@ convertButton.MouseButton1Click:Connect(function()
     outputBox.Text = russianText
 end)
 
--- Create send to chat button
-local sendButton = Instance.new("TextButton")
-sendButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-sendButton.Position = UDim2.new(0.1, 0, 0.7, 0)
-sendButton.Text = "Send to Chat"
-sendButton.Font = Enum.Font.SourceSans
-sendButton.TextSize = 20
-sendButton.TextColor3 = Color3.new(1, 1, 1)
-sendButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
-sendButton.Parent = frame
-
-sendButton.MouseButton1Click:Connect(function()
-    local message = outputBox.Text
-    if message ~= "" then
-        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
-    end
-end)
-
 -- Create circular minimize button
 local minimizeButton = Instance.new("TextButton")
 minimizeButton.Size = UDim2.new(0.05, 0, 0.1, 0)
@@ -111,18 +93,7 @@ local uiCorner2 = Instance.new("UICorner")
 uiCorner2.CornerRadius = UDim.new(0.5, 0)
 uiCorner2.Parent = closeButton
 
--- Create toggle size button
-local toggleSizeButton = Instance.new("TextButton")
-toggleSizeButton.Size = UDim2.new(0.05, 0, 0.1, 0)
-toggleSizeButton.Position = UDim2.new(0.8, 0, 0, 0)
-toggleSizeButton.BackgroundColor3 = Color3.new(0, 0, 1)
-toggleSizeButton.Text = ""
-toggleSizeButton.Parent = frame
-
-local uiCorner3 = Instance.new("UICorner")
-uiCorner3.CornerRadius = UDim.new(0.5, 0)
-uiCorner3.Parent = toggleSizeButton
-
+-- Minimize button functionality
 local minimized = false
 local minimizedButton
 
@@ -136,9 +107,9 @@ minimizeButton.MouseButton1Click:Connect(function()
         minimizedButton.Text = ""
         minimizedButton.Parent = gui
 
-        local uiCorner4 = Instance.new("UICorner")
-        uiCorner4.CornerRadius = UDim.new(0.5, 0)
-        uiCorner4.Parent = minimizedButton
+        local uiCorner3 = Instance.new("UICorner")
+        uiCorner3.CornerRadius = UDim.new(0.5, 0)
+        uiCorner3.Parent = minimizedButton
 
         frame.Visible = false
         minimized = true
@@ -151,21 +122,9 @@ minimizeButton.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Close button functionality
 closeButton.MouseButton1Click:Connect(function()
     gui:Destroy()
-end)
-
-local smallSize = UDim2.new(0.2, 0, 0.15, 0)
-local largeSize = UDim2.new(0.4, 0, 0.3, 0)
-local small = false
-
-toggleSizeButton.MouseButton1Click:Connect(function()
-    if small then
-        frame.Size = largeSize
-    else
-        frame.Size = smallSize
-    end
-    small = not small
 end)
 
 -- Make GUI draggable
@@ -179,4 +138,5 @@ local function update(input)
     frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
-frame
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType
