@@ -74,12 +74,7 @@ sendButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
 sendButton.Parent = frame
 
 sendButton.MouseButton1Click:Connect(function()
-    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
-        Text = outputBox.Text,
-        Color = Color3.new(1, 1, 1),
-        Font = Enum.Font.SourceSans,
-        TextSize = 20
-    })
+    game:GetService("Chat"):Chat(inputBox.Text)
 end)
 
 convertButton.MouseButton1Click:Connect(function()
@@ -117,10 +112,10 @@ local minimized = false
 local minimizedButton
 
 minimizeButton.MouseButton1Click:Connect(function()
-if not minimized then
+    if not minimized then
         -- Create minimized button
         minimizedButton = Instance.new("TextButton")
-        minimizedButton.Size = UDim2.new(0.05, 0, 0.05, 0)
+        minimizedButton.Size = UDim.new(0.05, 0, 0.05, 0)
         minimizedButton.Position = UDim2.new(0, 0, 0.9, 0)
         minimizedButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
         minimizedButton.Text = ""
