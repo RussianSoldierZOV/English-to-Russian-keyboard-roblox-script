@@ -63,6 +63,25 @@ outputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
 outputBox.TextEditable = false
 outputBox.Parent = frame
 
+local sendButton = Instance.new("TextButton")
+sendButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+sendButton.Position = UDim2.new(0.1, 0, 0.9, 0)
+sendButton.Text = "Send to Chat"
+sendButton.Font = Enum.Font.SourceSans
+sendButton.TextSize = 20
+sendButton.TextColor3 = Color3.new(1, 1, 1)
+sendButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
+sendButton.Parent = frame
+
+sendButton.MouseButton1Click:Connect(function()
+    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+        Text = outputBox.Text,
+        Color = Color3.new(1, 1, 1),
+        Font = Enum.Font.SourceSans,
+        TextSize = 20
+    })
+end)
+
 convertButton.MouseButton1Click:Connect(function()
     local englishText = inputBox.Text
     local russianText = convertToRussian(englishText)
@@ -98,7 +117,7 @@ local minimized = false
 local minimizedButton
 
 minimizeButton.MouseButton1Click:Connect(function()
-    if not minimized then
+if not minimized then
         -- Create minimized button
         minimizedButton = Instance.new("TextButton")
         minimizedButton.Size = UDim2.new(0.05, 0, 0.05, 0)
@@ -139,4 +158,27 @@ local function update(input)
 end
 
 frame.InputBegan:Connect(function(input)
-    if input.UserInputType
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        update(input)
+    end
+end)
