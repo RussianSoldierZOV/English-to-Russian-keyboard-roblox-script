@@ -26,47 +26,71 @@ end
 local gui = Instance.new("ScreenGui")
 gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0.4, 0, 0.3, 0)
-frame.Position = UDim2.new(0.3, 0, 0.35, 0)
-frame.BackgroundColor3 = Color3.new(1, 1, 1)
-frame.BorderSizePixel = 0
-frame.Parent = gui
+local scrollingFrame = Instance.new("ScrollingFrame")
+scrollingFrame.Size = UDim2.new(0.4, 0, 0.3, 0)
+scrollingFrame.Position = UDim2.new(0.3, 0, 0.35, 0)
+scrollingFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+scrollingFrame.BorderSizePixel = 0
+scrollingFrame.ScrollBarThickness = 16
+scrollingFrame.Parent = gui
 
 local inputBox = Instance.new("TextBox")
 inputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
-inputBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+inputBox.Position = UDim2.new(0.1, 0, 0.1, 0)
 inputBox.PlaceholderText = "Enter English text here"
 inputBox.Font = Enum.Font.SourceSans
 inputBox.TextSize = 20
 inputBox.TextColor3 = Color3.new(0, 0, 0)
 inputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
-inputBox.Parent = frame
+inputBox.Parent = scrollingFrame
 
 local convertButton = Instance.new("TextButton")
-convertButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-convertButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+convertButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+convertButton.Position = UDim2.new(0.1, 0, 0.35, 0)
 convertButton.Text = "Convert to Russian"
 convertButton.Font = Enum.Font.SourceSans
 convertButton.TextSize = 20
 convertButton.TextColor3 = Color3.new(1, 1, 1)
 convertButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
-convertButton.Parent = frame
+convertButton.Parent = scrollingFrame
 
 local outputBox = Instance.new("TextBox")
 outputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
-outputBox.Position = UDim2.new(0.1, 0, 0.8, 0)
+outputBox.Position = UDim2.new(0.1, 0, 0.45, 0)
 outputBox.Font = Enum.Font.SourceSans
 outputBox.TextSize = 20
 outputBox.TextColor3 = Color3.new(0, 0, 0)
 outputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
 outputBox.TextEditable = false
-outputBox.Parent = frame
+outputBox.Parent = scrollingFrame
+
+local copyButton = Instance.new("TextButton")
+copyButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+copyButton.Position = UDim2.new(0.7, 0, 0.45, 0)
+copyButton.Text = "Copy"
+copyButton.Font = Enum.Font.SourceSans
+copyButton.TextSize = 20
+copyButton.TextColor3 = Color3.new(1, 1, 1)
+copyButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
+copyButton.Parent = scrollingFrame
 
 convertButton.MouseButton1Click:Connect(function()
     local englishText = inputBox.Text
     local russianText = convertToRussian(englishText)
     outputBox.Text = russianText
+    
+    -- Send message to chat bar
+    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+        Text = russianText,
+        Color = Color3.new(1, 1, 1),
+        Font = Enum.Font.SourceSans,
+        FontSize = Enum.FontSize.Size24,
+    })
+end)
+
+copyButton.MouseButton1Click:Connect(function()
+    local clipboard = game:GetService("ClipboardService")
+    clipboard:SetClipboard(outputBox.Text)
 end)
 
 -- Create circular minimize button
@@ -75,7 +99,7 @@ minimizeButton.Size = UDim2.new(0.05, 0, 0.1, 0)
 minimizeButton.Position = UDim2.new(0.85, 0, 0, 0)
 minimizeButton.BackgroundColor3 = Color3.new(1, 0, 0)
 minimizeButton.Text = ""
-minimizeButton.Parent = frame
+minimizeButton.Parent = scrollingFrame
 
 local uiCorner1 = Instance.new("UICorner")
 uiCorner1.CornerRadius = UDim.new(0.5, 0)
@@ -87,7 +111,7 @@ closeButton.Size = UDim2.new(0.05, 0, 0.1, 0)
 closeButton.Position = UDim2.new(0.9, 0, 0, 0)
 closeButton.BackgroundColor3 = Color3.new(1, 0, 0)
 closeButton.Text = ""
-closeButton.Parent = frame
+closeButton.Parent = scrollingFrame
 
 local uiCorner2 = Instance.new("UICorner")
 uiCorner2.CornerRadius = UDim.new(0.5, 0)
@@ -111,11 +135,11 @@ minimizeButton.MouseButton1Click:Connect(function()
         uiCorner3.CornerRadius = UDim.new(0.5, 0)
         uiCorner3.Parent = minimizedButton
 
-        frame.Visible = false
+        scrollingFrame.Visible = false
         minimized = true
 
         minimizedButton.MouseButton1Click:Connect(function()
-            frame.Visible = true
+            scrollingFrame.Visible = true
             minimizedButton:Destroy()
             minimized = false
         end)
@@ -135,14 +159,14 @@ local startPos
 
 local function update(input)
     local delta = input.Position - dragStart
-    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    scrollingFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
-frame.InputBegan:Connect(function(input)
+scrollingFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
-        startPos = frame.Position
+        startPos = scrollingFrame.Position
 
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
@@ -152,7 +176,7 @@ frame.InputBegan:Connect(function(input)
     end
 end)
 
-frame.InputChanged:Connect(function(input)
+scrollingFrame.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
         dragInput = input
     end
