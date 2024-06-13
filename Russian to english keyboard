@@ -63,20 +63,6 @@ outputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
 outputBox.TextEditable = false
 outputBox.Parent = frame
 
-local sendButton = Instance.new("TextButton")
-sendButton.Size = UDim2.new(0.8, 0, 0.1, 0)
-sendButton.Position = UDim2.new(0.1, 0, 0.9, 0)
-sendButton.Text = "Send to Chat"
-sendButton.Font = Enum.Font.SourceSans
-sendButton.TextSize = 20
-sendButton.TextColor3 = Color3.new(1, 1, 1)
-sendButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
-sendButton.Parent = frame
-
-sendButton.MouseButton1Click:Connect(function()
-    game:GetService("Chat"):Chat(inputBox.Text)
-end)
-
 convertButton.MouseButton1Click:Connect(function()
     local englishText = inputBox.Text
     local russianText = convertToRussian(englishText)
@@ -115,7 +101,7 @@ minimizeButton.MouseButton1Click:Connect(function()
     if not minimized then
         -- Create minimized button
         minimizedButton = Instance.new("TextButton")
-        minimizedButton.Size = UDim.new(0.05, 0, 0.05, 0)
+        minimizedButton.Size = UDim2.new(0.05, 0, 0.05, 0)
         minimizedButton.Position = UDim2.new(0, 0, 0.9, 0)
         minimizedButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
         minimizedButton.Text = ""
