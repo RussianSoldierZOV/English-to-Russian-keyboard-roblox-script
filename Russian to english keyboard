@@ -33,40 +33,62 @@ frame.BackgroundColor3 = Color3.new(1, 1, 1)
 frame.BorderSizePixel = 0
 frame.Parent = gui
 
+local scrollingFrame = Instance.new("ScrollingFrame")
+scrollingFrame.Size = UDim2.new(1, 0, 1, 0)
+scrollingFrame.CanvasSize = UDim2.new(0, 0, 2, 0)  -- Adjust this value as needed for more content
+scrollingFrame.ScrollBarThickness = 10
+scrollingFrame.Parent = frame
+
 local inputBox = Instance.new("TextBox")
 inputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
-inputBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+inputBox.Position = UDim2.new(0.1, 0, 0.1, 0)
 inputBox.PlaceholderText = "Enter English text here"
 inputBox.Font = Enum.Font.SourceSans
 inputBox.TextSize = 20
 inputBox.TextColor3 = Color3.new(0, 0, 0)
 inputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
-inputBox.Parent = frame
+inputBox.Parent = scrollingFrame
 
 local convertButton = Instance.new("TextButton")
 convertButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-convertButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+convertButton.Position = UDim2.new(0.1, 0, 0.4, 0)
 convertButton.Text = "Convert to Russian"
 convertButton.Font = Enum.Font.SourceSans
 convertButton.TextSize = 20
 convertButton.TextColor3 = Color3.new(1, 1, 1)
 convertButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
-convertButton.Parent = frame
+convertButton.Parent = scrollingFrame
 
 local outputBox = Instance.new("TextBox")
 outputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
-outputBox.Position = UDim2.new(0.1, 0, 0.8, 0)
+outputBox.Position = UDim2.new(0.1, 0, 0.7, 0)
 outputBox.Font = Enum.Font.SourceSans
 outputBox.TextSize = 20
 outputBox.TextColor3 = Color3.new(0, 0, 0)
 outputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
 outputBox.TextEditable = false
-outputBox.Parent = frame
+outputBox.Parent = scrollingFrame
+
+local sendButton = Instance.new("TextButton")
+sendButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+sendButton.Position = UDim2.new(0.1, 0, 1, 0)
+sendButton.Text = "Send to Chat"
+sendButton.Font = Enum.Font.SourceSans
+sendButton.TextSize = 20
+sendButton.TextColor3 = Color3.new(1, 1, 1)
+sendButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
+sendButton.Parent = scrollingFrame
 
 convertButton.MouseButton1Click:Connect(function()
     local englishText = inputBox.Text
     local russianText = convertToRussian(englishText)
     outputBox.Text = russianText
+end)
+
+sendButton.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+    local russianText = outputBox.Text
+    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(russianText, "All")
 end)
 
 -- Create circular minimize button
@@ -147,8 +169,7 @@ frame.InputBegan:Connect(function(input)
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
-            end
-        end)
+            end)
     end
 end)
 
