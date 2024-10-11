@@ -1,6 +1,3 @@
-local UserInputService = game:GetService("UserInputService")
-
--- Function to convert English text to Russian-like text
 local function convertToRussian(text)
     local conversionTable = {
         ["A"] = "Д", ["B"] = "Б", ["C"] = "Ҫ", ["D"] = "Ԁ", ["E"] = "Є", ["F"] = "Ғ",
@@ -64,7 +61,7 @@ outputBox.Font = Enum.Font.SourceSans
 outputBox.TextSize = 20
 outputBox.TextColor3 = Color3.new(0, 0, 0)
 outputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
-outputBox.TextEditable = false
+outputBox.TextEditable = false -- Make it read-only
 outputBox.Parent = scrollingFrame
 
 local copyButton = Instance.new("TextButton")
@@ -91,9 +88,15 @@ convertButton.MouseButton1Click:Connect(function()
     })
 end)
 
+-- Copy button functionality
 copyButton.MouseButton1Click:Connect(function()
-    local clipboard = game:GetService("ClipboardService")
-    clipboard:SetClipboard(outputBox.Text)
+    -- Alert the user to copy manually
+    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+        Text = "Select the text and use Ctrl+C to copy.",
+        Color = Color3.new(1, 1, 1),
+        Font = Enum.Font.SourceSans,
+        FontSize = Enum.FontSize.Size24,
+    })
 end)
 
 -- Create circular minimize button
@@ -176,20 +179,3 @@ scrollingFrame.InputBegan:Connect(function(input)
                 dragging = false
             end
         end)
-    end
-end)
-
-scrollingFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if dragging and input == dragInput then
-        update(input)
-    end
-end)
-
--- Ensure GUI appears correctly on startup
-gui.Enabled = true  -- Ensure the GUI is visible when the game starts
