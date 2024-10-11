@@ -1,3 +1,4 @@
+-- Function to convert English text to a similar-looking Russian text
 local function convertToRussian(text)
     local conversionTable = {
         ["A"] = "Д", ["B"] = "Б", ["C"] = "Ҫ", ["D"] = "Ԁ", ["E"] = "Є", ["F"] = "Ғ",
@@ -22,7 +23,7 @@ local function convertToRussian(text)
     return russianText
 end
 
--- Create GUI
+-- Create the main GUI
 local gui = Instance.new("ScreenGui")
 gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
@@ -34,6 +35,7 @@ scrollingFrame.BorderSizePixel = 0
 scrollingFrame.ScrollBarThickness = 16
 scrollingFrame.Parent = gui
 
+-- Input Box for English text
 local inputBox = Instance.new("TextBox")
 inputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
 inputBox.Position = UDim2.new(0.1, 0, 0.1, 0)
@@ -44,6 +46,7 @@ inputBox.TextColor3 = Color3.new(0, 0, 0)
 inputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
 inputBox.Parent = scrollingFrame
 
+-- Button to convert text
 local convertButton = Instance.new("TextButton")
 convertButton.Size = UDim2.new(0.8, 0, 0.1, 0)
 convertButton.Position = UDim2.new(0.1, 0, 0.35, 0)
@@ -54,6 +57,7 @@ convertButton.TextColor3 = Color3.new(1, 1, 1)
 convertButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
 convertButton.Parent = scrollingFrame
 
+-- Output Box for Russian text
 local outputBox = Instance.new("TextBox")
 outputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
 outputBox.Position = UDim2.new(0.1, 0, 0.45, 0)
@@ -64,6 +68,7 @@ outputBox.BackgroundColor3 = Color3.new(0.9, 0.9, 0.9)
 outputBox.TextEditable = false -- Make it read-only
 outputBox.Parent = scrollingFrame
 
+-- Copy button to alert users
 local copyButton = Instance.new("TextButton")
 copyButton.Size = UDim2.new(0.2, 0, 0.1, 0)
 copyButton.Position = UDim2.new(0.7, 0, 0.45, 0)
@@ -74,25 +79,41 @@ copyButton.TextColor3 = Color3.new(1, 1, 1)
 copyButton.BackgroundColor3 = Color3.new(0, 0.6, 0)
 copyButton.Parent = scrollingFrame
 
+-- Create TextService instance for filtering
+local TextService = game:GetService("TextService")
+
+-- Function to handle conversion
 convertButton.MouseButton1Click:Connect(function()
     local englishText = inputBox.Text
     local russianText = convertToRussian(englishText)
-    outputBox.Text = russianText
-    
-    -- Send message to chat bar
-    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
-        Text = russianText,
-        Color = Color3.new(1, 1, 1),
-        Font = Enum.Font.SourceSans,
-        FontSize = Enum.FontSize.Size24,
-    })
+
+    -- Check if the message gets tagged
+    local filteredMessage = TextService:FilterStringForBroadcast(russianText, game.Players.LocalPlayer.UserId)
+
+    if filteredMessage then
+        outputBox.Text = russianText
+        -- Notify user of conversion
+        game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+            Text = "Converted: " .. russianText,
+            Color = Color3.new(1, 1, 1),
+            Font = Enum.Font.SourceSans,
+            FontSize = Enum.FontSize.Size24,
+        })
+    else
+        -- Notify the user that the message was inappropriate
+        game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+            Text = "The converted message contains inappropriate content.",
+            Color = Color3.new(1, 0, 0),
+            Font = Enum.Font.SourceSans,
+            FontSize = Enum.FontSize.Size24,
+        })
+    end
 end)
 
--- Copy button functionality
+-- Notify the user on how to copy
 copyButton.MouseButton1Click:Connect(function()
-    -- Alert the user to copy manually
     game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
-        Text = "Select the text and use Ctrl+C to copy.",
+        Text = "Select the text in the output box and use Ctrl+C to copy.",
         Color = Color3.new(1, 1, 1),
         Font = Enum.Font.SourceSans,
         FontSize = Enum.FontSize.Size24,
@@ -123,13 +144,13 @@ local uiCorner2 = Instance.new("UICorner")
 uiCorner2.CornerRadius = UDim.new(0.5, 0)
 uiCorner2.Parent = closeButton
 
--- Minimize button functionality
+-- Functionality for minimize button
 local minimized = false
 local minimizedButton
 
 minimizeButton.MouseButton1Click:Connect(function()
     if not minimized then
-        -- Create minimized button
+        -- Create a minimized button
         minimizedButton = Instance.new("TextButton")
         minimizedButton.Size = UDim2.new(0.05, 0, 0.05, 0)
         minimizedButton.Position = UDim2.new(0, 0, 0.9, 0)
@@ -152,30 +173,12 @@ minimizeButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Close button functionality
+-- Functionality for close button
 closeButton.MouseButton1Click:Connect(function()
     gui:Destroy()
 end)
 
--- Make GUI draggable
-local dragging
-local dragInput
-local dragStart
-local startPos
-
-local function update(input)
-    local delta = input.Position - dragStart
-    scrollingFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-scrollingFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = scrollingFrame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
+-- Close the GUI if the close button is clicked
+closeButton.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
