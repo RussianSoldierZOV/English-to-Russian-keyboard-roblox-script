@@ -1,3 +1,6 @@
+local UserInputService = game:GetService("UserInputService")
+
+-- Function to convert English text to Russian-like text
 local function convertToRussian(text)
     local conversionTable = {
         ["A"] = "Д", ["B"] = "Б", ["C"] = "Ҫ", ["D"] = "Ԁ", ["E"] = "Є", ["F"] = "Ғ",
@@ -187,3 +190,6 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
         update(input)
     end
 end)
+
+-- Ensure GUI appears correctly on startup
+gui.Enabled = true  -- Ensure the GUI is visible when the game starts
